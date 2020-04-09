@@ -303,7 +303,7 @@ def incoming():
             user_0 = User(full_name=viber_request.user.name, viber_id=viber_request.user.id)
             session.add(user_0)
             session.commit()
-        user = session.query(User).filter(User.viber_id == user_0).first()
+        user = session.query(User).filter(User.viber_id == viber_request.user.id).first()
         time=str(user.last_answer_time).replace('-', '.')[:19]
         wds_learnt = session.query(Learning).filter(Learning.user_id == user.id).filter(
             Learning.right_answers >= 20).all().__len__()
