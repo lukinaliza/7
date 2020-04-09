@@ -236,7 +236,7 @@ def checkEndSession(viber_id):
     set = session.query(Settings).first()
     if user.questionCount_session >= set.session_words:
         final = TextMessage(text=f"Вы верно ответили на {user.correct_answers_session} из {set.session_words} Сыграем снова?! ЖМИ НА СТАРТ")
-        viber.send_messages(viber_id, [final])
+        viber.send_messages(viber_id, [final, KeyboardMessage(tracking_data='tracking_data', keyboard=START_KEYBOARD) ])
         user.correct_answers_session = 0
         user.questionCount_session = 0
         session.commit()
@@ -345,15 +345,15 @@ def incoming():
                 elif text == "Dismiss":
                     user.time_reminder = datetime.datetime.utcnow() + datetime.timedelta(minutes=set.deltatime_reminder)
                     session.commit()
-                    viber.send_messages(viber_request.sender.id, [
-                        TextMessage(text=f"Жду тебя! Нажми на Start как будешь готов"), KeyboardMessage(tracking_data='tracking_data', keyboard=START_KEYBOARD) ])
+                    # viber.send_messages(viber_request.sender.id, [
+                    #     TextMessage(text=f"Жду тебя! Нажми на Start как будешь готов"), KeyboardMessage(tracking_data='tracking_data', keyboard=START_KEYBOARD) ])
                 else:
                     # проверка на правильность ответа
                     if checkAnswer(viber_request.sender.id, text):
                         if (checkEndSession(viber_request.sender.id)):
-                            willContinue = TextMessage(text=f"Сыграем ещё раз?")
+                            # willContinue = TextMessage(text=f"Сыграем ещё раз?")
                             messageKeyboard = KeyboardMessage(tracking_data='tracking_data', keyboard=START_KEYBOARD)
-                            viber.send_messages(viber_request.sender.id, [willContinue, messageKeyboard])
+                            viber.send_messages(viber_request.sender.id, [messageKeyboard])
                         else:
                             print("getting 4 words in the end")
                             portion_words = get_four_words_for_user(user.id)
