@@ -26,9 +26,9 @@ bot_configuration = BotConfiguration(
 viber = Api(bot_configuration)
 app = Flask(__name__)
 
-engine = create_engine(
-   'postgres://qnakjltyvuqpku:c5f08f5f6d9e839f3a50bb0b84a48a646fed55c9c7709c0a05df1937e6f42703@ec2-54-247-79-178.eu-west-1.compute.amazonaws.com:5432/d7dbjfelqdi0jl', poolclass=NullPool, echo=False)
-engine = create_engine('sqlite:///test.db', poolclass=NullPool, echo = False)
+# engine = create_engine(
+#    'postgres://qnakjltyvuqpku:c5f08f5f6d9e839f3a50bb0b84a48a646fed55c9c7709c0a05df1937e6f42703@ec2-54-247-79-178.eu-west-1.compute.amazonaws.com:5432/d7dbjfelqdi0jl', poolclass=NullPool, echo=False)
+engine = create_engine('sqlite:///test00.db', poolclass=NullPool, echo = False)
 Base = declarative_base()
 
 class Word(Base):
@@ -121,7 +121,7 @@ def initWords():
         with open('english_words.json', encoding='utf-8') as f:
             english_words = json.load(f)
         for word in english_words:
-            new_word = Word(word=word['word'], translation=word['translation'], examples = "".join(word['examples']))
+            new_word = Word(word=word['word'], translation=word['translation'], examples = " ".join(word['examples']))
             session.add(new_word)
     session.commit()
     session.close()
@@ -181,6 +181,8 @@ def getStat(viber_id):
 def showExample(viber_id):
     session = Session()
     val = (session.query(Word).join(User).filter(User.viber_id == viber_id)).first().examples
+    val=val.split(". ")
+    number = random.choice(range(len(val)))
     user = session.query(User).filter(User.viber_id == viber_id).first()
     session.close()
     print('showExample inner')
@@ -193,7 +195,7 @@ def showExample(viber_id):
         button["ActionBody"] = f'{[user.questionCount_session, w.translation]}'
     messageKeyboard = KeyboardMessage(tracking_data='tracking_data', keyboard=SAMPLE_KEYBOARD)
     viber.send_messages(viber_id, [
-        TextMessage(text=val), messageKeyboard
+        TextMessage(text=val[number]), messageKeyboard
     ])
 
 def checkAnswer(viber_id, text):
