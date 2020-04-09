@@ -233,7 +233,7 @@ def checkEndSession(viber_id):
     user = session.query(User).filter(User.viber_id == viber_id).first()
     set = session.query(Settings).first()
     if user.questionCount_session >= set.session_words:
-        final = TextMessage(text=f"Вы верно ответили на {user.correct_answers_session} из {set.session_words} Сыграем снова?! ЖМИ НА СТАРТ"")
+        final = TextMessage(text=f"Вы верно ответили на {user.correct_answers_session} из {set.session_words} Сыграем снова?! ЖМИ НА СТАРТ")
         viber.send_messages(viber_id, [final])
         user.correct_answers_session = 0
         user.questionCount_session = 0
@@ -303,7 +303,7 @@ def incoming():
             user_0 = User(full_name=viber_request.user.name, viber_id=viber_request.user.id)
             session.add(user_0)
             session.commit()
-        user = session.query(User).filter(User.viber_id == viber_id).first()
+        user = session.query(User).filter(User.viber_id == user_0).first()
         time=str(user.last_answer_time).replace('-', '.')[:19]
         wds_learnt = session.query(Learning).filter(Learning.user_id == user.id).filter(
             Learning.right_answers >= 20).all().__len__()
@@ -332,7 +332,7 @@ def incoming():
                     #stat = getStat(viber_request.sender.id)
                     user.time_reminder = datetime.datetime.utcnow() + datetime.timedelta(minutes=set.deltatime_reminder)
                     session.commit()
-                    viber.send_messages(viber_request.sender.id, [TextMessage(text=stat)])
+                    # viber.send_messages(viber_request.sender.id, [TextMessage(text=stat)])
                     print("getting 4 words in the Start")
                     portion_words = get_four_words_for_user(user.id)
                     # заполнение клавиатуры
