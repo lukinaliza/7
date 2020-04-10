@@ -28,7 +28,7 @@ def timed_job():
     for u in users:
         if datetime.datetime.utcnow() >= u.time_reminder:
             try:
-                viber.send_messages(u.viber_id, [TextMessage(text="Время повторить слова", keyboard=WAIT_KEYBOARD,
+                viber.send_messages(u.viber_id, [TextMessage(text="Пора повторить слова", keyboard=WAIT_KEYBOARD,
                                                          tracking_data='tracking_data')])
             except:
                 print("Пользователь отписался")
