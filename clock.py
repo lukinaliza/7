@@ -27,11 +27,15 @@ def timed_job():
     users = session.query(User)
     for u in users:
         if datetime.datetime.utcnow() >= u.time_reminder:
-            viber.send_messages(u.viber_id, [TextMessage(text="Пора повторить слова", keyboard=WAIT_KEYBOARD,
+            try:
+                viber.send_messages(u.viber_id, [TextMessage(text="Время повторить слова", keyboard=WAIT_KEYBOARD,
                                                          tracking_data='tracking_data')])
+            except:
+                print("Пользователь отписался")
+                print(u.full_name)
     session.close()
 
-@sched.scheduled_job('interval', minutes=10)
+@sched.scheduled_job('interval', minutes=1)
 def wake_up():
     r = requests.get('https://viberbotforen.herokuapp.com/')
 
