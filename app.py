@@ -307,8 +307,9 @@ def incoming():
             session.commit()
         user = session.query(User).filter(User.viber_id == viber_request.user.id).first()
         time=str(user.last_answer_time).replace('-', '.')[:19]
+        set = session.query(Settings).first()
         wds_learnt = session.query(Learning).filter(Learning.user_id == user.id).filter(
-            Learning.right_answers >= 20).all().__len__()
+            Learning.right_answers >= set.rightanswers_tolearnt).all().__len__()
         viber.send_messages(viber_request.user.id, [
             TextMessage(text = " Привет! это бот предназначенный для изучения английских слов! \n" \
                f'Нажмите старт чтобы начать:).\n' \
